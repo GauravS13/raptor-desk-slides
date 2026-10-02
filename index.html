@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raptor Desk · DOGFOOD 2026 slides</title>
+<meta name="description" content="Raptor Desk, a self-hosted hackathon judging portal built for DOGFOOD 2026: 41 slides with every feature, screenshots, the fairness engine, calibration and the kingmaker check.">
+<meta property="og:title" content="Raptor Desk · DOGFOOD 2026">
+<meta property="og:description" content="From uncertainty to a signed decision. 41 slides: every feature, with screenshots.">
+<meta property="og:image" content="https://gauravs13.github.io/raptor-desk-slides/og.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="color-scheme" content="dark">
+<style>
+  :root {
+    --bg: #0b0f17; --s1: #0f172a; --s2: #161e31; --line: #334155;
+    --text: #e2e8f0; --muted: #94a3b8; --amber: #f97316;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { display: flex; flex-direction: column; overflow: hidden; }
+  header { display: flex; align-items: center; gap: 8px; padding: 8px 16px; flex-wrap: wrap; }
+  header .brand { font-weight: 600; margin-right: auto; white-space: nowrap; }
+  header .brand span { color: var(--amber); }
+  .btn { background: var(--s2); color: var(--text); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 10px; font: inherit; cursor: pointer; text-decoration: none; white-space: nowrap; }
+  .btn:hover { border-color: var(--amber); }
+  .btn:focus-visible, .hot:focus-visible, .thumb:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  .counter { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 64px; text-align: center; }
+  main { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 0 16px; }
+  .stage { position: relative; width: min(100%, calc((100vh - 120px) * 16 / 9)); aspect-ratio: 16 / 9;
+    overflow: hidden; border-radius: 10px; box-shadow: 0 10px 40px #0008; background: var(--bg); }
+  .layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; will-change: transform, opacity; }
+  .hot { position: absolute; display: block; border-radius: 6px; }
+  .hot:hover { background: #f9731622; outline: 1px solid #f9731688; }
+  .nav { position: absolute; top: 0; bottom: 0; width: 18%; background: none; border: 0; cursor: pointer; color: transparent; }
+  .nav.prev { left: 0; } .nav.next { right: 0; }
+  .nav:hover { color: #ffffffaa; } .nav span { font-size: 40px; }
+  .progress { height: 3px; background: var(--s2); }
+  .progress div { height: 100%; background: var(--amber); transition: width .25s; }
+  footer { display: flex; justify-content: space-between; color: var(--muted); padding: 6px 16px 10px; font-size: 12px; gap: 12px; }
+  .notes { position: fixed; left: 16px; right: 16px; bottom: 16px; max-width: 900px; margin: 0 auto; background: var(--s1);
+    border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; display: none; box-shadow: 0 10px 40px #000a; }
+  .notes.open { display: block; animation: rise .25s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+  @keyframes fadein { from { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .notes.open, .grid.open { animation: none; } .progress div { transition: none; } }
+  .notes h2 { margin: 0 0 6px; font-size: 15px; }
+  .notes p { margin: 0; color: var(--muted); }
+  .grid { position: fixed; inset: 0; background: #0b0f17f2; overflow: auto; display: none; padding: 16px; }
+  .grid.open { display: block; animation: fadein .2s ease-out; }
+  .grid .head { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto 12px; }
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; max-width: 1400px; margin: 0 auto; }
+  .thumb { background: var(--s2); border: 1px solid var(--line); border-radius: 8px; padding: 6px; cursor: pointer; color: var(--text); text-align: left; font: inherit; }
+  .thumb img { width: 100%; aspect-ratio: 16/9; display: block; border-radius: 4px; }
+  .thumb span { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .thumb.current { border-color: var(--amber); }
+  @media (max-width: 640px) {
+    header { padding: 8px; } .hide-sm { display: none; } main { padding: 0 8px; }
+    .stage { width: 100%; } footer .keys { display: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Raptor Desk <span>·</span> DOGFOOD 2026</div>
+  <button class="btn" id="agenda" aria-label="Go to the agenda">☰ Agenda</button>
+  <button class="btn" id="overview" aria-label="Show all slides">▦ <span class="hide-sm">All slides</span></button>
+  <button class="btn" id="notesBtn" aria-label="Show speaker notes">✎ <span class="hide-sm">Notes</span></button>
+  <a class="btn hide-sm" href="raptor-desk-slides.pdf" download>PDF</a>
+  <a class="btn hide-sm" href="raptor-desk-slides.pptx" download>PPTX</a>
+  <a class="btn" href="https://github.com/GauravS13/raptor-desk" target="_blank" rel="noopener">GitHub</a>
+  <button class="btn" id="full" aria-label="Full screen">⛶</button>
+</header>
+<main>
+  <div class="stage" id="stage">
+    <div id="layers" role="img" aria-label=""></div>
+    <div id="hots"></div>
+    <button class="nav prev" id="prev" aria-label="Previous slide"><span>‹</span></button>
+    <button class="nav next" id="next" aria-label="Next slide"><span>›</span></button>
+  </div>
+</main>
+<div class="progress"><div id="bar"></div></div>
+<footer>
+  <span class="counter" id="counter" aria-live="polite"></span>
+  <span class="keys">← → or swipe · O all slides · N notes · F full screen</span>
+  <span>Built for DOGFOOD 2026 by Hackathon Raptors</span>
+</footer>
+<aside class="notes" id="notes" aria-live="polite"><h2 id="notesTitle"></h2><p id="notesText"></p></aside>
+<div class="grid" id="grid" role="dialog" aria-label="All slides">
+  <div class="head"><strong>All slides</strong><button class="btn" id="closeGrid">Close (Esc)</button></div>
+  <div class="thumbs" id="thumbs"></div>
+</div>
+<script>
+const SLIDES = [{"title": "Raptor Desk: from uncertainty to a signed decision", "notes": "Raptor Desk: a self-hosted hackathon portal for submissions, fair judging and a public vote, built for DOGFOOD 2026. The one idea: take a ranking all the way from uncertainty to a signed decision anyone can verify."}, {"title": "Agenda", "notes": "Interactive agenda: each card links to its section."}, {"title": "Section 01: Why and how", "notes": "Section divider: Why and how."}, {"title": "The problem: judge luck decides prizes", "notes": "Raw averages tie for first place. prj_10 is third only because it drew a lenient judge. Leniency differences dwarf the gaps between projects. The textbook z-score breaks on the fixtures."}, {"title": "The approach: one chain, from doubt to a verifiable decision", "notes": "Measure with a bias-corrected model. Doubt: bootstrap chances, close calls, kingmaker check. Ask: propose the right extra reviews within a budget. Deliberate: humans decide close calls with written reasons. Freeze and sign. Publish with a method card and an offline verifier."}, {"title": "The DOGFOOD scorecard, and how to check each claim", "notes": "Four criteria with their weights. Each card says what we claim and how an evaluator checks it in minutes."}, {"title": "Architecture: one command, fully offline", "notes": "App: Django 5.2 LTS with django-ninja for the REST API and HTMX pages. Worker: an outbox for email and webhooks. Mailpit catches email locally. SQLite in WAL mode on a volume. The scoring engine is a pure Python package; an import contract stops it depending on the web framework."}, {"title": "Section 02: Participants", "notes": "Section divider: Participants."}, {"title": "Sign in, and a home page with real results", "notes": "Password or magic-link email sign-in. One-click demo accounts for evaluators. The home page opens on the latest real published ranking with its chances and signature."}, {"title": "Event page, teams and versioned submissions", "notes": "DOGFOOD 2026 itself is preloaded: its prizes, its rubric with the T1 gate and 40/25/20/15 weights. Teams form with invite links. Resubmitting creates version 2 of the same project; submitted versions are frozen."}, {"title": "Public gallery, project pages and moderated comments", "notes": "The gallery is public, searchable and filterable by track. Project pages show answers to the submission questions. Comments are moderated: organizers hide, never silently delete."}, {"title": "Feedback report: scores explained, judges anonymous", "notes": "The feedback report shows where the team placed, corrected scores per criterion against the event average, and written feedback. Judges stay anonymous. 'Something factually wrong?' sends a query that appears on the organizer's Queries tab."}, {"title": "Section 03: Organizers", "notes": "Section divider: Organizers."}, {"title": "Console and an event lifecycle with preflight checks", "notes": "Eight phases: draft, registration, submissions, eligibility, judging, deliberation, published, archived. Moving phase runs preflight checks; publishing is blocked while prize close calls are undecided or the snapshot is stale. Phase history is append-only."}, {"title": "Rubric, tracks, prizes and questions", "notes": "The DOGFOOD rubric as a template: the T1 gate, weights 40/25/20/15, and bonus criteria that only break exact ties. Templates for three other Raptors events are included. Tracks, prizes and custom submission questions per event."}, {"title": "People, roles and a judging plan that respects people", "notes": "Roles are granted per event. The assignment plan covers every track, caps each judge's load and respects conflicts. Progress per judge; the score ledger's verification status is shown at the top."}, {"title": "Exports at every stage, and whole-event bundles", "notes": "CSV exports at every stage, safe against spreadsheet formula injection. A whole-event bundle carries a manifest with a SHA-256; importing goes to draft so nothing becomes public by accident. The audit trail is append-only and filterable."}, {"title": "Section 04: Judges", "notes": "Section divider: Judges."}, {"title": "A keyboard-first review console", "notes": "Each judge sees their queue in a random order, so no project is always reviewed first or last. Number keys score each criterion, Ctrl+Enter submits, drafts autosave, and one click recuses with a reason."}, {"title": "Pairwise mode: “which is stronger?”", "notes": "Judges compare two projects they reviewed with the arrow keys, or down for too close to call. A Bradley–Terry model (MM algorithm with a weak prior, bootstrap intervals) ranks them beside the score-based ranking, and the next pair shown is the one that decides a close call."}, {"title": "Signed protocols, certificates and a judge passport", "notes": "Judges get a signed protocol of their reviews and a certificate. A judge can opt in to a public passport listing their certificates across events. Anyone can check any record at /verify, or offline with tools/verify.py, which pins the deployment key."}, {"title": "Section 05: The fairness engine", "notes": "Section divider: The fairness engine."}, {"title": "Normalization you can defend", "notes": "Each score is the project's quality plus the judge's leniency plus noise. It never divides by a judge's spread, so a flat-liner or a one-review judge cannot break it. In 200 simulated events with a known truth it beats plain averaging in 96% of runs."}, {"title": "Measure → Doubt → Ask, on the organizer's results page", "notes": "300 bootstrap refits give each project a chance of finishing inside each prize cutoff. Between 20% and 80% is a close call. The desk proposes which judge should review which project and why, preferring judges who saw the neighbouring projects, within a budget. One click assigns and emails them."}, {"title": "Kingmaker check: does one judge decide a prize?", "notes": "This finds what the bootstrap misses: the bootstrap resamples reviews but keeps every judge. On the fixtures, 9 of 30 judges move a top-5 place, and jdg_04 and jdg_15 each hand first place to another project on their own. It's not an accusation: it marks a prize that rests on one opinion."}, {"title": "Calibration, published whatever it says", "notes": "We checked our own uncertainty and published it. The 90% intervals contain the truth only 52% of the time: too narrow. Stated 95%+ is right about four times in five. But the chances still beat the base rate clearly, and half of the prize-line mistakes were flagged as close calls in advance. That is why chances point people at doubt and never decide."}, {"title": "Judge diagnostics: leniency, spread and misfit", "notes": "Negative leniency is harsh, positive is generous. The flat-lining judge is marked 'identical scores everywhere: excluded'. Judges with fewer than three reviews are flagged, because their offset rests on little evidence."}, {"title": "Section 06: Decide and publish", "notes": "Section divider: Decide and publish."}, {"title": "Deliberation: decisions with written reasons", "notes": "The deliberation board lists close calls on the prize places. Each decision (place above, confirm) needs a written reason and is append-only. Freeze and sign creates an Ed25519-signed snapshot. Preflight blocks publishing while close calls are undecided or the snapshot is out of date."}, {"title": "Published results, method card, tamper-evident ledger", "notes": "The public results page shows prize places, the full ranking with chances, the decisions and their reasons, and a method card: method, evidence, parameters, snapshot hash and signing key. The score ledger is hash-chained and checked against the live database; demo_tamper proves it."}, {"title": "Section 07: Vote and integrations", "notes": "Section divider: Vote and integrations."}, {"title": "A community vote that is hard to stuff", "notes": "Votes by link, email or member token; tokens are hashed with a per-voter seed, so each voter sees their own stable order. Own-team votes are refused. Single-vote or quadratic voting. Bursts from one network are held for review, never dropped; trusted venue networks and allowed email domains are set per event. Tallies stay hidden until voting closes."}, {"title": "Integrations and API first", "notes": "Every console action exists in the REST API, enforced by a parity test; OpenAPI at /api/docs, served locally under a strict CSP. Webhooks are HMAC-signed, delivered by the outbox with retries, and refused on private addresses outside the demo profile. The embeddable gallery and whole-event bundles complete the picture."}, {"title": "Section 08: Security, ops and proof", "notes": "Section divider: Security, ops and proof."}, {"title": "Isolation, enforced in the API, not the frontend", "notes": "Judge B cannot read Judge A's scores: 403. A participant cannot read judge scores: 403. Anonymous: 401. Every route carries a default-deny policy, and a system check refuses to boot the portal if any route lacks one."}, {"title": "Built to run for real", "notes": "doctor gives a health report. Backups are online; restore verifies checksums and schema version before replacing anything, and takes a safety backup first. JSON logs never contain URL tokens. Admin-only Prometheus metrics. A production profile creates no demo data and refuses to start while demo credentials exist."}, {"title": "Proof, not claims", "notes": "The official checker and fixtures are pinned by SHA-256 in CI; CI reruns the checker against a fresh docker compose up and byte-compares with the committed report. The extended checker covers T3 and T4 with a positive control for every refusal. The README truth table and JUDGING.md tables are generated, and CI fails if they drift."}, {"title": "Only in Raptor Desk", "notes": "These are the differentiators. The chain from uncertainty to a verifiable published decision is ours alone."}, {"title": "Bonus challenges: 4 of 4", "notes": "Normalization proof with a 200-run simulation and sensitivity analysis. Pairwise mode with Bradley–Terry. A threat model with what is not stopped. API first, enforced by a test."}, {"title": "Evaluate it in five minutes", "notes": "docker compose up, open localhost:8080, and use the /tour page. Demo accounts sign in with one click. Both checkers run from the repository root."}, {"title": "From uncertainty to a signed decision", "notes": "Close on the one idea."}];
+const N = SLIDES.length, W = 13.333, H = 7.5, REPO = "https://github.com/GauravS13/raptor-desk";
+const SECTIONS = [3, 8, 13, 18, 22, 28, 31, 34];
+const src = i => `slide-${String(i).padStart(2, "0")}.webp`;
+const box = (x, y, w, h) => ({ left: x / W * 100, top: y / H * 100, width: w / W * 100, height: h / H * 100 });
+
+// Clickable areas drawn on top of the slide images, matching the deck's own links.
+function hotspots(i) {
+  const list = [];
+  if (i === 2) SECTIONS.forEach((to, k) => list.push({ ...box(0.6 + (k % 2) * 6.15, 2.05 + Math.floor(k / 2) * 1.2, 5.95, 1.05), to, label: SLIDES[to - 1].title }));
+  if (i > 2) list.push({ ...box(11.583, 0.3, 1.2, 0.36), to: 2, label: "Agenda" });
+  if (i === 1) list.push({ ...box(0.7, 6.3, 3.6, 0.35), href: REPO, label: "Repository" });
+  if (i === N) list.push({ ...box(3.4, 4.9, 6.5, 0.45), href: REPO, label: "Repository" });
+  return list;
+}
+
+let cur = 0, ticket = 0;
+const $ = id => document.getElementById(id);
+const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const EASE = "cubic-bezier(.22,.61,.36,1)";
+
+// Transitions match the PowerPoint deck: a fade between slides, a push on section dividers.
+async function transition(to, dir) {
+  const mine = ++ticket;
+  const layers = $("layers");
+  const img = new Image();
+  img.className = "layer"; img.alt = ""; img.src = src(to);
+  try { await img.decode(); } catch (e) {}
+  if (mine !== ticket) return;  // a newer move started while this image loaded
+  layers.getAnimations({ subtree: true }).forEach(a => a.finish());
+  while (layers.children.length > 1) layers.firstElementChild.remove();
+  const old = layers.firstElementChild;
+  layers.appendChild(img);
+  if (reduced()) { old?.remove(); return; }
+  let anims;
+  if (!old) {
+    anims = [img.animate([{ opacity: 0, transform: "scale(.985)" }, { opacity: 1, transform: "none" }], { duration: 600, easing: EASE })];
+  } else if (SECTIONS.includes(to)) {
+    const d = dir > 0 ? 1 : -1;
+    const opts = { duration: 650, easing: EASE };
+    anims = [
+      img.animate([{ transform: `translateY(${d * 100}%)` }, { transform: "none" }], opts),
+      old.animate([{ transform: "none" }, { transform: `translateY(${-d * 100}%)` }], opts),
+    ];
+  } else {
+    anims = [img.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: "ease-out" })];
+  }
+  await Promise.all(anims.map(a => a.finished.catch(() => {})));
+  if (mine === ticket && old && old.parentNode) old.remove();
+}
+
+function show(i, push = true) {
+  const next = Math.min(Math.max(i, 1), N);
+  if (next === cur) return;
+  const dir = next > cur ? 1 : -1;
+  cur = next;
+  const s = SLIDES[cur - 1];
+  transition(cur, dir);
+  $("layers").setAttribute("aria-label", `Slide ${cur}: ${s.title}`);
+  $("counter").textContent = `${String(cur).padStart(2, "0")} / ${N}`;
+  $("bar").style.width = `${cur / N * 100}%`;
+  $("notesTitle").textContent = `${cur}. ${s.title}`;
+  $("notesText").textContent = s.notes;
+  document.title = `${cur}. ${s.title} · Raptor Desk`;
+  const hots = $("hots"); hots.innerHTML = "";
+  for (const h of hotspots(cur)) {
+    const a = document.createElement("a");
+    a.className = "hot"; a.setAttribute("aria-label", h.label); a.title = h.label;
+    Object.assign(a.style, { left: h.left + "%", top: h.top + "%", width: h.width + "%", height: h.height + "%" });
+    if (h.href) { a.href = h.href; a.target = "_blank"; a.rel = "noopener"; }
+    else { a.href = `#${h.to}`; a.onclick = e => { e.preventDefault(); show(h.to); }; }
+    hots.appendChild(a);
+  }
+  if (push) history.replaceState(null, "", `#${cur}`);
+  [cur + 1, cur - 1].forEach(j => { if (j >= 1 && j <= N) new Image().src = src(j); });
+  document.querySelectorAll(".thumb").forEach((t, k) => t.classList.toggle("current", k + 1 === cur));
+}
+
+$("prev").onclick = () => show(cur - 1);
+$("next").onclick = () => show(cur + 1);
+$("agenda").onclick = () => show(2);
+$("notesBtn").onclick = () => $("notes").classList.toggle("open");
+$("full").onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+const grid = $("grid");
+function openGrid() { grid.classList.add("open"); grid.querySelector(".current")?.scrollIntoView({ block: "center" }); }
+$("overview").onclick = openGrid;
+$("closeGrid").onclick = () => grid.classList.remove("open");
+SLIDES.forEach((s, k) => {
+  const b = document.createElement("button");
+  b.className = "thumb";
+  b.innerHTML = `<img loading="lazy" alt=""><span></span>`;
+  b.querySelector("img").src = src(k + 1);
+  b.querySelector("span").textContent = `${k + 1}. ${s.title}`;
+  b.onclick = () => { grid.classList.remove("open"); show(k + 1); };
+  $("thumbs").appendChild(b);
+});
+
+document.addEventListener("keydown", e => {
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  const k = e.key;
+  if (grid.classList.contains("open")) { if (k === "Escape" || k === "o" || k === "O") grid.classList.remove("open"); return; }
+  if (["ArrowRight", "PageDown", " "].includes(k)) { e.preventDefault(); show(cur + 1); }
+  else if (["ArrowLeft", "PageUp"].includes(k)) { e.preventDefault(); show(cur - 1); }
+  else if (k === "Home") show(1);
+  else if (k === "End") show(N);
+  else if (k === "n" || k === "N") $("notes").classList.toggle("open");
+  else if (k === "o" || k === "O") openGrid();
+  else if (k === "f" || k === "F") $("full").click();
+  else if (k === "Escape") $("notes").classList.remove("open");
+});
+let x0 = null;
+$("stage").addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+$("stage").addEventListener("touchend", e => {
+  if (x0 === null) return;
+  const dx = e.changedTouches[0].clientX - x0; x0 = null;
+  if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1));
+});
+window.addEventListener("hashchange", () => { const n = parseInt(location.hash.slice(1), 10); if (n && n !== cur) show(n, false); });
+show(parseInt(location.hash.slice(1), 10) || 1);
+</script>
+</body>
+</html>
